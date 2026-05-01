@@ -10,7 +10,7 @@
 <body>
 
   <header>
-    <h1>Environmental Monitor-TSA</h1>
+    <h1>Environmental Monitor</h1>
     <div class="header-right">
       <div class="datetime">
         <div class="date" id="date-display"></div>
@@ -27,6 +27,13 @@
       </div>
     </div>
   </header>
+
+  <div class="ip-bar">
+    <span class="ip-label">Arduino IP</span>
+    <input type="text" id="ip-input" placeholder="http://192.168.1.x" spellcheck="false" autocomplete="off">
+    <button onclick="saveIP()">Connect</button>
+    <span class="ip-status" id="ip-status"></span>
+  </div>
 
   <div class="bme-status-bar">
     <span class="bme-dot" id="bme-dot"></span>
