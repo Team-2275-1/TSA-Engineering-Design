@@ -1,8 +1,36 @@
-const ARDUINO_IP = 'http://10.151.27.160';
 const MAX_POINTS = 30;
 let isPowered = true;
 let firstLoad = true;
+let pollInterval = null;
 
+// Load saved IP or fall back to default
+let ARDUINO_IP = localStorage.getItem('arduino_ip') || 'http://10.182.164.160';
+
+// Populate the input on load
+window.addEventListener('DOMContentLoaded', () => {
+  const input = document.getElementById('ip-input');
+  input.value = ARDUINO_IP;
+
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') saveIP();
+  });
+});
+
+function saveIP() {
+  let val = document.getElementById('ip-input').value.trim();
+  if (!val) return;
+  if (!val.startsWith('http')) val = 'http://' + val;
+  ARDUINO_IP = val;
+  localStorage.setItem('arduino_ip', val);
+  document.getElementById('ip-status').textContent = 'Saved';
+  setTimeout(() => document.getElementById('ip-status').textContent = '', 2000);
+  // Restart polling with new IP
+  if (pollInterval) clearInterval(pollInterval);
+  fetchData();
+  pollInterval = setInterval(fetchData, 3000);
+}
+
+// Charts
 const chartDefs = [
   { id: 'chart-temp',     color: '#fff' },
   { id: 'chart-humidity', color: '#fff' },
@@ -146,10 +174,8 @@ async function fetchData() {
     }
   }
 
-  if (firstLoad) {
-    firstLoad = false;
-  }
+  if (firstLoad) firstLoad = false;
 }
 
 fetchData();
-setInterval(fetchData, 3000);
+pollInterval = setInterval(fetchData, 3000);
