@@ -99,6 +99,7 @@ setInterval(updateClock, 1000);
 updateClock();
 
 async function setPower(on) {
+  if (!on) zeroDisplay();
   isPowered = on;
   document.getElementById('power-status-text').textContent = on ? 'ON' : 'OFF';
   try {
@@ -108,13 +109,13 @@ async function setPower(on) {
 
 function parseHtml(html) {
   const patterns = {
-    temp:     /Temperature[:\s]+([\d.]+)/i,
-    humidity: /Humidity[:\s]+([\d.]+)/i,
-    pressure: /Pressure[:\s]+([\d.]+)/i,
-    altitude: /Altitude[:\s]+([\d.]+)/i,
-    ozone:    /Ozone[:\s]+([\d.]+)/i,
-    light:    /Light[:\s]+([\d.]+)/i,
-    bme:      /BME680[:\s]+([^\s<]+)/i,
+    temp:     /Temperature[^\d]*(\d+\.?\d*)/i,
+    humidity: /Humidity[^\d]*(\d+\.?\d*)/i,
+    pressure: /Pressure[^\d]*(\d+\.?\d*)/i,
+    altitude: /Altitude[^\d]*(\d+\.?\d*)/i,
+    ozone:    /Ozone[^\d]*(\d+\.?\d*)/i,
+    light:    /Light[^\d]*(\d+\.?\d*)/i,
+    bme:      /BME680[^:]*:[^<]*?([\w\s]+?)(?:<|\/|$)/i,
   };
   const result = {};
   for (const [key, rx] of Object.entries(patterns)) {
@@ -179,3 +180,10 @@ async function fetchData() {
 
 fetchData();
 pollInterval = setInterval(fetchData, 3000);
+
+function zeroDisplay() {
+  const fields = ['val-temp', 'val-humidity', 'val-pressure', 'val-altitude', 'val-ozone', 'val-light'];
+  const chartIds = ['chart-temp', 'chart-humidity', 'chart-pressure', 'chart-altitude', 'chart-ozone', 'chart-light'];
+  fields.forEach(id => document.getElementById(id).textContent = '0.00');
+  chartIds.forEach(id => pushToChart(id, 0));
+}
