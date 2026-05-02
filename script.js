@@ -184,6 +184,6 @@ pollInterval = setInterval(fetchData, 3000);
 function zeroDisplay() {
   const fields = ['val-temp', 'val-humidity', 'val-pressure', 'val-altitude', 'val-ozone', 'val-light'];
   const chartIds = ['chart-temp', 'chart-humidity', 'chart-pressure', 'chart-altitude', 'chart-ozone', 'chart-light'];
-  fields.forEach(id => document.getElementById(id).textContent = '0.00');
+  fields.forEach(id => document.getElementById(id).textContent = 'OFF');
   chartIds.forEach(id => pushToChart(id, 0));
 }
